@@ -19,25 +19,24 @@ app.post("/sign-up", (req, res) => {
     }
 
     users.push( { username, avatar } );
-    res.send("OK");
+    res.status(201).send("OK");
 });
 
 app.post("/tweets", (req, res) => {
     const {username, tweet} = req.body;
-
-    if(!username || !tweet ){
-        res.status(400).send("Todos os campos são obrigatórios!");
-        return;
-    }
-
     const isRegistered = users.some( (t) => t.username === username );
 
     if(!isRegistered){
         res.status(401).send("UNAUTHORIZED");
         return;
     }
+    if(!username || !tweet ){
+        res.status(400).send("Todos os campos são obrigatórios!");
+        return;
+    }
+
     tweets.push( {username, tweet} );
-    res.send("OK");
+    res.status(201).send("OK");
 });
 
 app.get("/tweets", (req, res) => {
