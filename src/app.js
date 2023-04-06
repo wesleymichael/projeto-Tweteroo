@@ -46,11 +46,21 @@ app.get("/tweets", (req, res) => {
     for(let i = tweets.length-1, count = 0; i >= 0 && count < maxTweets; i--, count++){
         const { username, tweet } = tweets[i];
         const user = users.find( (e) => e.username === username );
-        const avatar = user.avatar;
-        lastTweets.unshift({ username, avatar, tweet });
+        lastTweets.unshift({ username, avatar: user.avatar, tweet });
     }
     
     res.send(lastTweets);
+});
+
+
+app.get("/tweets/:username", (req, res) => {
+    const username = req.params.username;
+    const user = users.find( (e) => e.username === username );
+
+    const tweetsUser = tweets
+        .filter(tweet => tweet.username === username)
+        .map(tweet => ({ username, avatar: user.avatar, tweet: tweet.tweet }));
+    res.send(tweetsUser);
 });
 
 
