@@ -10,15 +10,26 @@ const PORT = 5000;
 const users = [];
 const tweets = [];
 
-app.post("/sign-up", (req, res) => {
+app.post("/sign-up", (req, res) => {   
     const {username, avatar} = req.body;
-    //const newUser = { username, avatar };
+
+    if(!username || !avatar ){
+        res.status(400).send("Todos os campos são obrigatórios!");
+        return;
+    }
+
     users.push( { username, avatar } );
     res.send("OK");
 });
 
 app.post("/tweets", (req, res) => {
     const {username, tweet} = req.body;
+
+    if(!username || !tweet ){
+        res.status(400).send("Todos os campos são obrigatórios!");
+        return;
+    }
+
     const isRegistered = users.some( (t) => t.username === username );
 
     if(!isRegistered){
