@@ -30,7 +30,17 @@ app.post("/tweets", (req, res) => {
 });
 
 app.get("/tweets", (req, res) => {
-    res.send("rota criada");
+    const lastTweets = [];
+    const maxTweets = 10;
+
+    for(let i = tweets.length-1, count = 0; i >= 0 && count < maxTweets; i--, count++){
+        const { username, tweet } = tweets[i];
+        const user = users.find( (e) => e.username === username );
+        const avatar = user.avatar;
+        lastTweets.unshift({ username, avatar, tweet });
+    }
+    
+    res.send(lastTweets);
 });
 
 
