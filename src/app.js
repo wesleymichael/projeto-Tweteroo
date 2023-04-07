@@ -10,7 +10,6 @@ const PORT = 5000;
 const users = [];
 const tweets = [];
 
-
 function isString(str){
     return typeof(str) === 'string';
 }
@@ -27,7 +26,9 @@ app.post("/sign-up", (req, res) => {
 });
 
 app.post("/tweets", (req, res) => {
-    const {username, tweet} = req.body;
+    const {tweet} = req.body;
+    const username = req.headers.user;
+
     const isRegistered = users.some( (t) => t.username === username );
 
     if(!isRegistered){
@@ -51,7 +52,7 @@ app.get("/tweets", (req, res) => {
     
     const start = (page - 1)*maxTweets;
     const end = start + maxTweets;
-    const tweetsPage = tweets.slice(start, end);
+    const tweetsPage = tweets.reverse().slice(start, end);
 
     const tweetsWithAvatar = tweetsPage.map( elem => {
         const { username, tweet } = elem;
