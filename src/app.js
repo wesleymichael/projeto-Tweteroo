@@ -19,8 +19,7 @@ app.post("/sign-up", (req, res) => {
     const {username, avatar} = req.body;
 
     if(!username || !avatar ||  !isString(username) || !isString(avatar) ){
-        res.status(400).send("Todos os campos são obrigatórios!");
-        return;
+        return res.status(400).send("Todos os campos são obrigatórios!");
     }
 
     users.push( { username, avatar } );
@@ -32,12 +31,10 @@ app.post("/tweets", (req, res) => {
     const isRegistered = users.some( (t) => t.username === username );
 
     if(!isRegistered){
-        res.status(401).send("UNAUTHORIZED");
-        return;
+        return res.status(401).send("UNAUTHORIZED");
     }
     if(!username || !tweet || !isString(username) || !isString(tweet) ){
-        res.status(400).send("Todos os campos são obrigatórios!");
-        return;
+        return res.status(400).send("Todos os campos são obrigatórios!");
     }
 
     tweets.push( {username, tweet} );
@@ -45,18 +42,24 @@ app.post("/tweets", (req, res) => {
 });
 
 app.get("/tweets", (req, res) => {
-    const lastTweets = [];
     const maxTweets = 10;
+    const page = req.query.page ? parseInt(req.query.page) : 1;
 
-    for(let i = tweets.length-1, count = 0; i >= 0 && count < maxTweets; i--, count++){
-        const { username, tweet } = tweets[i];
-        const user = users.find( (e) => e.username === username );
-        lastTweets.push({ username, avatar: user.avatar, tweet });
+    if(page < 1 || isNaN(page)){
+        return res.status(400).send("Informe uma página válida!");
     }
     
-    res.send(lastTweets);
-});
+    const start = (page - 1)*maxTweets;
+    const end = start + maxTweets;
+    const tweetsPage = tweets.slice(start, end);
 
+    const tweetsWithAvatar = tweetsPage.map( elem => {
+        const { username, tweet } = elem;
+        const user = users.find( (elem) => elem.username === username );
+        return {username, avatar: user.avatar, tweet};
+    })
+    res.send(tweetsWithAvatar);
+});
 
 app.get("/tweets/:username", (req, res) => {
     const username = req.params.username;
