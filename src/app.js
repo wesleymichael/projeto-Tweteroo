@@ -6,7 +6,6 @@ app.use(express.json());
 app.use(cors());
 
 const PORT = 5000;
-
 const users = [];
 const tweets = [];
 
@@ -18,7 +17,8 @@ app.post("/sign-up", (req, res) => {
     const {username, avatar} = req.body;
 
     if(!username || !avatar ||  !isString(username) || !isString(avatar) ){
-        return res.status(400).send("Todos os campos são obrigatórios!");
+        res.status(400).send("Todos os campos são obrigatórios!");
+        return;
     }
 
     users.push( { username, avatar } );
@@ -52,7 +52,10 @@ app.get("/tweets", (req, res) => {
     
     const start = (page - 1)*maxTweets;
     const end = start + maxTweets;
-    const tweetsPage = tweets.reverse().slice(start, end);
+    
+    const tweetsCopy = tweets.slice();
+    tweetsCopy.reverse();
+    const tweetsPage = tweetsCopy.slice(start, end);
 
     const tweetsWithAvatar = tweetsPage.map( elem => {
         const { username, tweet } = elem;
@@ -71,6 +74,5 @@ app.get("/tweets/:username", (req, res) => {
         .map(tweet => ({ username, avatar: user.avatar, tweet: tweet.tweet }));
     res.send(tweetsUser);
 });
-
 
 app.listen(PORT, () => console.log(`Running server on port ${PORT}`));
