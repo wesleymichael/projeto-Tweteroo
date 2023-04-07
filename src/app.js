@@ -10,10 +10,15 @@ const PORT = 5000;
 const users = [];
 const tweets = [];
 
+
+function isString(str){
+    return typeof(str) === 'string';
+}
+
 app.post("/sign-up", (req, res) => {   
     const {username, avatar} = req.body;
 
-    if(!username || !avatar ){
+    if(!username || !avatar ||  !isString(username) || !isString(avatar) ){
         res.status(400).send("Todos os campos são obrigatórios!");
         return;
     }
@@ -30,7 +35,7 @@ app.post("/tweets", (req, res) => {
         res.status(401).send("UNAUTHORIZED");
         return;
     }
-    if(!username || !tweet ){
+    if(!username || !tweet || !isString(username) || !isString(tweet) ){
         res.status(400).send("Todos os campos são obrigatórios!");
         return;
     }
@@ -46,7 +51,7 @@ app.get("/tweets", (req, res) => {
     for(let i = tweets.length-1, count = 0; i >= 0 && count < maxTweets; i--, count++){
         const { username, tweet } = tweets[i];
         const user = users.find( (e) => e.username === username );
-        lastTweets.unshift({ username, avatar: user.avatar, tweet });
+        lastTweets.push({ username, avatar: user.avatar, tweet });
     }
     
     res.send(lastTweets);
