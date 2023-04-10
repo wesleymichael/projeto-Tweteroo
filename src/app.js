@@ -32,10 +32,12 @@ app.post("/tweets", (req, res) => {
     const isRegistered = users.some( (t) => t.username === username );
 
     if(!isRegistered){
-        return res.status(401).send("UNAUTHORIZED");
+        res.status(401).send("UNAUTHORIZED");
+        return;
     }
     if(!username || !tweet || !isString(username) || !isString(tweet) ){
-        return res.status(400).send("Todos os campos são obrigatórios!");
+        res.status(400).send("Todos os campos são obrigatórios!");
+        return;
     }
 
     tweets.push( {username, tweet} );
@@ -47,7 +49,8 @@ app.get("/tweets", (req, res) => {
     const page = req.query.page ? parseInt(req.query.page) : 1;
 
     if(page < 1 || isNaN(page)){
-        return res.status(400).send("Informe uma página válida!");
+        res.status(400).send("Informe uma página válida!");
+        return;
     }
     
     const start = (page - 1)*maxTweets;
@@ -61,7 +64,7 @@ app.get("/tweets", (req, res) => {
         const { username, tweet } = elem;
         const user = users.find( (elem) => elem.username === username );
         return {username, avatar: user.avatar, tweet};
-    })
+    });
     res.send(tweetsWithAvatar);
 });
 
